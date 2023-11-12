@@ -1,0 +1,412 @@
+from unittest import TestCase, main
+from unittest.mock import patch
+from integration_test_helper import run_test
+
+class TestBlackjack(TestCase):
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_example(self, input_mock, randint_mock):
+        '''
+        Both the dealer and user receive cards that end up with a hand less than 21.
+        The dealer wins by having a higher hand than the user.
+
+        This does not count as one of your tests.
+        '''
+        output = run_test([3, 5, 8], ['y', 'n'], [3, 5, 10], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a 3\n" \
+                   "Drew a 5\n" \
+                   "You have 8. Hit (y/n)? y\n" \
+                   "Drew an 8\n" \
+                   "You have 16. Hit (y/n)? n\n" \
+                   "Final hand: 16.\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew a 3\n" \
+                   "Drew a 5\n" \
+                   "Dealer has 8.\n" \
+                   "Drew a 10\n" \
+                   "Final hand: 18.\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "Dealer wins!\n"
+        self.assertEqual(output, expected)
+
+    # Make sure all your test functions start with test_ 
+    # Follow indentation of test_example
+    # WRITE ALL YOUR TESTS BELOW. Do not delete this line.
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_user_win_case1(self, input_mock, randint_mock):
+        '''
+        User receive cards that end up with a hand of less than 21 but Dealer receive cards that end up with a hand more than 21.
+
+        The user wins as dealer hand becomes more than 21 and busts.
+        '''
+        output = run_test([3, 5, 8], ['y', 'n'], [1, 5, 10], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a 3\n" \
+                   "Drew a 5\n" \
+                   "You have 8. Hit (y/n)? y\n" \
+                   "Drew an 8\n" \
+                   "You have 16. Hit (y/n)? n\n" \
+                   "Final hand: 16.\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew an Ace\n" \
+                   "Drew a 5\n" \
+                   "Dealer has 16.\n" \
+                   "Drew a 10\n" \
+                   "Final hand: 26.\n" \
+                   "BUST.\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "You win!\n"
+        self.assertEqual(output, expected)
+    
+    
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_user_win_case2(self, input_mock, randint_mock):
+        '''
+        Both the dealer and user receive cards that end up with a hand less than 21.
+        The user wins by having a higher hand than the dealer.
+        '''
+        output = run_test([3, 5, 10], ['y', 'n'], [3, 5, 9], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a 3\n" \
+                   "Drew a 5\n" \
+                   "You have 8. Hit (y/n)? y\n" \
+                   "Drew a 10\n" \
+                   "You have 18. Hit (y/n)? n\n" \
+                   "Final hand: 18.\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew a 3\n" \
+                   "Drew a 5\n" \
+                   "Dealer has 8.\n" \
+                   "Drew a 9\n" \
+                   "Final hand: 17.\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "You win!\n"
+        self.assertEqual(output, expected)
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_user_win_case3(self, input_mock, randint_mock):
+        '''
+        The dealer receive cards that end up with a hand less than 21 but the user receive cards that end up with a hand of exactly 21.
+        The user wins by Blackjack.
+        '''
+        output = run_test([6, 4, 1], ['y', 'n'], [1, 5, 4], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a 6\n" \
+                   "Drew a 4\n" \
+                   "You have 10. Hit (y/n)? y\n" \
+                   "Drew an Ace\n" \
+                   "Final hand: 21.\n" \
+                   "BLACKJACK!\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew an Ace\n" \
+                   "Drew a 5\n" \
+                   "Dealer has 16.\n" \
+                   "Drew a 4\n" \
+                   "Final hand: 20.\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "You win!\n"
+        self.assertEqual(output, expected)  
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_user_win_case4(self, input_mock, randint_mock):
+        '''
+        The user receive cards that end up with a hand of exactly 21 but Dealer receive cards that end up with a hand of more than 21.
+        User wins by Blackjack and also due to Bust of Dealer.
+        '''
+        output = run_test([13, 4, 7], ['y', 'n'], [12, 6, 1], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a King\n" \
+                   "Drew a 4\n" \
+                   "You have 14. Hit (y/n)? y\n" \
+                   "Drew a 7\n" \
+                   "Final hand: 21.\n" \
+                   "BLACKJACK!\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew a Queen\n" \
+                   "Drew a 6\n" \
+                   "Dealer has 16.\n" \
+                   "Drew an Ace\n" \
+                   "Final hand: 27.\n" \
+                   "BUST.\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "You win!\n"
+        self.assertEqual(output, expected)  
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_dealer_win_case1(self, input_mock, randint_mock):
+        '''
+        The user receive cards that end up with hand of more than 21.
+        The dealer receive cards that end up with hand of less than 21.
+        The dealer wins by the bust of user.
+        '''
+        output = run_test([1, 5, 6], ['y', 'n'], [3, 5, 10], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew an Ace\n" \
+                   "Drew a 5\n" \
+                   "You have 16. Hit (y/n)? y\n" \
+                   "Drew a 6\n" \
+                   "Final hand: 22.\n" \
+                   "BUST.\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew a 3\n" \
+                   "Drew a 5\n" \
+                   "Dealer has 8.\n" \
+                   "Drew a 10\n" \
+                   "Final hand: 18.\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "Dealer wins!\n"
+        self.assertEqual(output, expected)
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_dealer_win_case2(self, input_mock, randint_mock):
+        '''
+        The user receive cards that end up with a hand of less than 21.
+        The dealer receive cards that end up with a hand of exactly 21.
+        The dealer wins by blackjack.
+        '''
+        output = run_test([3, 5, 8, 4], ['y', 'y', 'n'], [5, 5, 1], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a 3\n" \
+                   "Drew a 5\n" \
+                   "You have 8. Hit (y/n)? y\n" \
+                   "Drew an 8\n" \
+                   "You have 16. Hit (y/n)? y\n" \
+                   "Drew a 4\n" \
+                   "You have 20. Hit (y/n)? n\n" \
+                   "Final hand: 20.\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew a 5\n" \
+                   "Drew a 5\n" \
+                   "Dealer has 10.\n" \
+                   "Drew an Ace\n" \
+                   "Final hand: 21.\n" \
+                   "BLACKJACK!\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "Dealer wins!\n"
+        self.assertEqual(output, expected)
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_dealer_win_case3(self, input_mock, randint_mock):
+        '''
+        Both the dealer and user receive cards that end up with a hand less than 21.
+        The dealer wins by having a higher hand than the user.
+        '''
+        output = run_test([1, 2, 3], ['y', 'n'], [1, 5, 3], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew an Ace\n" \
+                   "Drew a 2\n" \
+                   "You have 13. Hit (y/n)? y\n" \
+                   "Drew a 3\n" \
+                   "You have 16. Hit (y/n)? n\n" \
+                   "Final hand: 16.\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew an Ace\n" \
+                   "Drew a 5\n" \
+                   "Dealer has 16.\n" \
+                   "Drew a 3\n" \
+                   "Final hand: 19.\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "Dealer wins!\n"
+        self.assertEqual(output, expected)
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_dealer_win_case4(self, input_mock, randint_mock):
+        '''
+        Both user and dealer receive cards that end up with hand of greater than 21.
+        But if user busts, dealer automatically wins.
+        So, dealer wins.
+        '''
+        output = run_test([6, 1, 2, 3], ['y', 'y', 'n'], [6, 13, 11], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a 6\n" \
+                   "Drew an Ace\n" \
+                   "You have 17. Hit (y/n)? y\n" \
+                   "Drew a 2\n" \
+                   "You have 19. Hit (y/n)? y\n" \
+                   "Drew a 3\n" \
+                   "Final hand: 22.\n" \
+                   "BUST.\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew a 6\n" \
+                   "Drew a King\n" \
+                   "Dealer has 16.\n" \
+                   "Drew a Jack\n" \
+                   "Final hand: 26.\n" \
+                   "BUST.\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "Dealer wins!\n"
+        self.assertEqual(output, expected)
+
+
+    
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_dealer_win_case5(self, input_mock, randint_mock):
+        '''
+        The user receive cards that end up with hand greater than 21.
+        The dealer receive cards that end up with hand exactly 21.
+        So, dealer wins.
+        '''
+        output = run_test([4, 5, 6, 7], ['y', 'y', 'n'], [11, 2, 9], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a 4\n" \
+                   "Drew a 5\n" \
+                   "You have 9. Hit (y/n)? y\n" \
+                   "Drew a 6\n" \
+                   "You have 15. Hit (y/n)? y\n" \
+                   "Drew a 7\n" \
+                   "Final hand: 22.\n" \
+                   "BUST.\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew a Jack\n" \
+                   "Drew a 2\n" \
+                   "Dealer has 12.\n" \
+                   "Drew a 9\n" \
+                   "Final hand: 21.\n" \
+                   "BLACKJACK!\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "Dealer wins!\n"
+        self.assertEqual(output, expected)
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_neitherwin_pushcase1(self, input_mock, randint_mock):
+        '''
+        Both user and dealer receive cards that end with hand of exactly 21.
+        Since both have same value, This game is tied.
+        User pushes(ties).
+        '''
+        output = run_test([3, 5, 7, 6], ['y', 'y', 'n'], [12, 5, 6], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a 3\n" \
+                   "Drew a 5\n" \
+                   "You have 8. Hit (y/n)? y\n" \
+                   "Drew a 7\n" \
+                   "You have 15. Hit (y/n)? y\n" \
+                   "Drew a 6\n" \
+                   "Final hand: 21.\n" \
+                   "BLACKJACK!\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew a Queen\n" \
+                   "Drew a 5\n" \
+                   "Dealer has 15.\n" \
+                   "Drew a 6\n" \
+                   "Final hand: 21.\n" \
+                   "BLACKJACK!\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "Push.\n"
+        self.assertEqual(output, expected)
+
+    @patch('blackjack_helper.randint')
+    @patch('builtins.input')
+    def test_neitherwin_pushcase2(self, input_mock, randint_mock):
+        '''
+        Both user and dealerreceive cards that end up with value less than 21. 
+        But, both of them have same exact hand value.
+        So, teh user pushes(ties).
+        '''
+        output = run_test([11, 3, 7], ['y', 'n'], [4, 5, 1], randint_mock, input_mock)
+        expected = "-----------\n" \
+                   "YOUR TURN\n" \
+                   "-----------\n" \
+                   "Drew a Jack\n" \
+                   "Drew a 3\n" \
+                   "You have 13. Hit (y/n)? y\n" \
+                   "Drew a 7\n" \
+                   "You have 20. Hit (y/n)? n\n" \
+                   "Final hand: 20.\n" \
+                   "-----------\n" \
+                   "DEALER TURN\n" \
+                   "-----------\n" \
+                   "Drew a 4\n" \
+                   "Drew a 5\n" \
+                   "Dealer has 9.\n" \
+                   "Drew an Ace\n" \
+                   "Final hand: 20.\n" \
+                   "-----------\n" \
+                   "GAME RESULT\n" \
+                   "-----------\n" \
+                   "Push.\n"
+        self.assertEqual(output, expected)
+    
+    # Write all your tests above this. Do not delete this line.
+
+if __name__ == '__main__':
+    main()
